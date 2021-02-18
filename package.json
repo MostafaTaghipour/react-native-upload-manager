@@ -1,0 +1,67 @@
+{
+  "name": "react-native-upload-manager",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/MostafaTaghipour/react-native-upload-manager#readme",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "Mostafa Taghipour <mostafa.taghipoor@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "android",
+    "ios",
+    "lib",
+    "react-native-upload-manager.podspec",
+    "!.DS_Store",
+    "!.gradle",
+    "!.idea",
+    "!build",
+    "!gradle",
+    "!*.iml",
+    "!gradlew",
+    "!gradlew.bat",
+    "!local.properties",
+    "!project.xcworkspace",
+    "!xcshareddata",
+    "!xcuserdata"
+  ],
+  "scripts": {
+    "compile": "rm -rf lib && tsc -p .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "prepare": "yarn compile",
+    "test": "jest",
+    "publish": "npm pubilsh"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "@types/jest": "^26.0.20",
+    "@types/react-native": "^0.63.46",
+    "@types/react-test-renderer": "^17.0.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.19.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.65.0",
+    "react": "^17.0.1",
+    "react-native": "^0.63.4",
+    "react-test-renderer": "^17.0.1",
+    "typescript": "^4.1.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
