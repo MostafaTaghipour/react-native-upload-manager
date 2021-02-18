@@ -2,7 +2,7 @@
 
 A React Native Library to manage your http post file uploads with android and iOS background support.  If you are uploading large files like videos, use this so your users can background your app during a long upload. This library support both Serial (Queue) and Parallel upload.
 
-<img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/react-native-upload-manager/main/screenshots/1.png"><img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/react-native-upload-manager/main/screenshots/2.png">
+<img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/react-native-upload-manager/main/screenshots/1.png"><img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/react-native-upload-manager/main/screenshots/2.png" style="max-width:100%;margin-left: 15px;">
 # Installation
 
 ## 1. Install package
