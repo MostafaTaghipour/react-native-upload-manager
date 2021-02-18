@@ -165,7 +165,7 @@ const App = () => {
           onErrorMessage: 'upload failed',
           onCompleteMessage: 'upload success',
           onProgressMessage: 'uploading...  ([[PROGRESS]])',
-          // autoClear: true,
+          autoClear: true,
         },
       }
 

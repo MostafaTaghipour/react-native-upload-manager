@@ -30,7 +30,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prepare": "yarn compile",
     "test": "jest",
-    "publish": "npm pubilsh"
+    "deploy": "npm pubilsh"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

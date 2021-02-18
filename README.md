@@ -1,22 +1,16 @@
-# react-native-upload-manager
+# react-native-upload-manager [![npm version](https://badge.fury.io/js/react-native-upload-manager.svg)](https://badge.fury.io/js/react-native-upload-manager)
 
-The only React Native http post file uploader with android and iOS background support.  If you are uploading large files like videos, use this so your users can background your app during a long upload.
-
-NOTE: Use major version 4 with RN 47.0 and greater.  If you have RN less than 47, use 3.0.  To view all available versions:
-`npm show react-native-background-upload versions`
-
-
+A React Native Library to manage your http post file uploads with android and iOS background support.  If you are uploading large files like videos, use this so your users can background your app during a long upload. This library support both Serial (Queue) and Parallel upload.
+<img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/AndroidEasyList/master/screenshots/1.png"><img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/AndroidEasyList/master/screenshots/2.png">
 # Installation
 
 ## 1. Install package
 
-`npm install --save react-native-background-upload`
+`npm install --save react-native-upload-manager`
 
 or
 
-`yarn add react-native-background-upload`
-
-Note: if you are installing on React Native < 0.47, use `react-native-background-upload@3.0.0` instead of `react-native-background-upload`
+`yarn add react-native-upload-manager`
 
 ## 2. Link Native Code
 
@@ -39,23 +33,21 @@ No further actions required.
 #### iOS
 
 1. In the XCode's "Project navigator", right click on your project's Libraries folder ➜ `Add Files to <...>`
-2. Go to `node_modules` ➜ `react-native-background-upload` ➜ `ios` ➜ select `VydiaRNFileUploader.xcodeproj`
-3. Add `VydiaRNFileUploader.a` to `Build Phases -> Link Binary With Libraries`
+2. Go to `node_modules` ➜ `react-native-upload-manager` ➜ `ios` ➜ select `RNUploadManager.xcodeproj`
+3. Add `RNUploadManager.a` to `Build Phases -> Link Binary With Libraries`
 
 #### Android
 1. Add the following lines to `android/settings.gradle`:
 
     ```gradle
-    include ':react-native-background-upload'
-    project(':react-native-background-upload').projectDir = new File(settingsDir, '../node_modules/react-native-background-upload/android')
+    include ':react-native-upload-manager'
+    project(':react-native-upload-manager').projectDir = new File(settingsDir, '../node_modules/react-native-upload-manager/android')
     ```
 2. Add the compile and resolutionStrategy line to the dependencies in `android/app/build.gradle`:
 
     ```gradle
-    configurations.all { resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.4.1' } // required by react-native-background-upload until React Native supports okhttp >= okhttp 3.5
-
     dependencies {
-        compile project(':react-native-background-upload')
+        compile project(':react-native-upload-manager')
     }
     ```
 
@@ -63,65 +55,78 @@ No further actions required.
 3. Add the import and link the package in `MainApplication.java`:
 
     ```java
-    import com.vydia.RNUploader.UploaderReactPackage;  <-- add this import
+    import com.mostafataghipour.reactnativeuploadmanager;  <-- add this import
 
     public class MainApplication extends Application implements ReactApplication {
         @Override
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                 new MainReactPackage(),
-                new UploaderReactPackage() // <-- add this line
+                new RNUploadManagerPackage() // <-- add this line
             );
         }
     }
     ```
 
-4. Ensure Android SDK versions.  Open your app's `android/app/build.gradle` file.  Ensure `compileSdkVersion` and `targetSdkVersion` are 25.  Otherwise you'll get compilation errors.
 
 ## 3. Expo
 
-To use this library with [Expo](https://expo.io) one must first detach (eject) the project and follow [step 2](#2-link-native-code) instructions. Additionally on iOS there is a must to add a Header Search Path to other dependencies which are managed using Pods. To do so one has to add `$(SRCROOT)/../../../ios/Pods/Headers/Public` to Header Search Path in `VydiaRNFileUploader` module using XCode.
+To use this library with [Expo](https://expo.io) one must first detach (eject) the project and follow [step 2](#2-link-native-code) instructions.
 
 # Usage
 
 ```js
-import Upload from 'react-native-background-upload'
+import UploadManager from 'react-native-upload-manager'
 
-const options = {
-  url: 'https://myservice.com/path/to/post',
-  path: 'file://path/to/file/on/device',
-  method: 'POST',
-  type: 'raw',
-  maxRetries: 2, // set retry count (Android only). Default 2
-  headers: {
-    'content-type': 'application/octet-stream', // Customize content-type
-    'my-custom-header': 's3headervalueorwhateveryouneed'
-  },
-  // Below are options only supported on Android
-  notification: {
-    enabled: true
-  },
-  useUtf8Charset: true
+useEffect(() => {
+    const progressSubscription = UploadManager.addListener('progress', (data) => {
+        console.log(`Progress: ${data.progress}%`)
+    })
+    
+    const completeSubscription = UploadManager.addListener('completed', (data) => {
+        // data includes responseCode: number and responseBody: Object
+        console.log('Completed!')
+    })
+    
+    const errorSubscription = UploadManager.addListener('error', (data) => {
+        console.log(`Error: ${data.error}%`)
+    })
+    
+    const cancelSubscription = UploadManager.addListener('cancelled', (data) => {
+        console.log(`Cancelled!`)
+    })
+    
+    return () => {
+      progressSubscription.remove()
+      completeSubscription.remove()
+      errorSubscription.remove()
+      cancelSubscription.remove()
+    }
+  }, [])
+  
+const uploadfile = async () => {
+    const options = {
+      url: 'https://myservice.com/path/to/post',
+      path: 'file://path/to/file/on/device',
+      method: 'POST',
+      type: 'raw',
+      maxRetries: 0, // set retry count (Android only). Default 0
+      headers: {
+        'content-type': 'application/octet-stream', // Customize content-type
+        'my-custom-header': 's3headervalueorwhateveryouneed'
+      },
+      // Below are options only supported on Android
+      notification: {
+        enabled: true,
+        onErrorMessage: 'upload failed',
+        onCompleteMessage: 'upload success',
+        onProgressMessage: 'uploading...  ([[PROGRESS]])',
+        autoClear: true
+      }
+    }
+
+    const uploadId = await UploadManager.startUpload(options)
 }
-
-Upload.startUpload(options).then((uploadId) => {
-  console.log('Upload started')
-  Upload.addListener('progress', uploadId, (data) => {
-    console.log(`Progress: ${data.progress}%`)
-  })
-  Upload.addListener('error', uploadId, (data) => {
-    console.log(`Error: ${data.error}%`)
-  })
-  Upload.addListener('cancelled', uploadId, (data) => {
-    console.log(`Cancelled!`)
-  })
-  Upload.addListener('completed', uploadId, (data) => {
-    // data includes responseCode: number and responseBody: Object
-    console.log('Completed!')
-  })
-}).catch((err) => {
-  console.log('Upload error!', err)
-})
 ```
 
 ## Multipart Uploads
@@ -167,8 +172,6 @@ Returns a promise with the string ID of the upload.  Will reject if there is a c
 |`field`|string|Required if `type: 'multipart'`||The form field name for the file.  Only used when `type: 'multipart`|`uploaded-file`|
 |`parameters`|object|Optional||Additional form fields to include in the HTTP request. Only used when `type: 'multipart`||
 |`notification`|Notification object (see below)|Optional||Android only.  |`{ enabled: true, onProgressTitle: "Uploading...", autoClear: true }`|
-|`useUtf8Charset`|boolean|Optional||Android only. Set to true to use `utf-8` as charset. ||
-|`appGroup`|string|Optional|iOS only. App group ID needed for share extensions to be able to properly call the library. See: https://developer.apple.com/documentation/foundation/nsfilemanager/1412643-containerurlforsecurityapplicati
 
 ### Notification Object (Android Only)
 |Name|Type|Required|Description|Example|
@@ -211,13 +214,24 @@ Cancels an upload.
 
 Returns a Promise that resolves to an boolean indicating whether the upload was cancelled.
 
-### addListener(eventType, uploadId, listener)
+### addToUploadQueue(options)
 
-Adds an event listener, possibly confined to a single upload.
+The primary method you will use to add your filr to upload queue. your upload queue will be continue even after your app going to background mode.
+
+Returns a promise with the string ID of the upload. Will reject if there is a connection problem, the file doesn’t exist, or there is some other problem.
+
+All Options are similar to startUpload function.
+
+### clearUploadQueue()
+
+Clear all files in upload queue.
+
+
+### addListener(eventType, listener)
+
+Adds an event listener to listen to upload events.
 
 `eventType` Event to listen for. Values: 'progress' | 'error' | 'completed' | 'cancelled'
-
-`uploadId` The upload ID from `startUpload` to filter events for.  If null, this will include all uploads.
 
 `listener` Function to call when the event occurs.
 
@@ -261,42 +275,13 @@ Event Data
 |---|---|---|---|
 |`id`|string|Required|The ID of the upload.|
 
-# Customizing Android Build Properties
-You may want to customize the `compileSdk, buildToolsVersion, and targetSdkVersion` versions used by this package.  For that, add this to `android/build.gradle`:
-
-```
-ext {
-    targetSdkVersion = 23
-    compileSdkVersion = 23
-    buildToolsVersion = '23.0.2'
-}
-```
-
-Add it above `allProjects` and you're good.  Your `android/build.gradle` might then resemble:
-```
-buildscript {
-    repositories {
-        jcenter()
-    }
-}
-
-ext {
-    targetSdkVersion = 27
-    compileSdkVersion = 27
-    buildToolsVersion = '23.0.2'
-}
-
-allprojects {
-
-```
-
 # FAQs
 
 Is there an example/sandbox app to test out this package?
 
-> Yes, there is a simple react native app that comes with an [express](https://github.com/expressjs/express) server where you can see react-native-background-upload in action and try things out in an isolated local environment.
+> Yes, there is a simple react native app that you can find  [here](https://github.com/MostafaTaghipour/react-native-upload-manager/tree/main/example).
 
-[RNBackgroundExample](https://github.com/Vydia/react-native-background-upload/blob/master/example/RNBackgroundExample)
+
 
 Does it support iOS camera roll assets?
 
@@ -310,52 +295,23 @@ Why should I use this file uploader instead of others that I've Googled like [re
 
 > This package has two killer features not found anywhere else (as of 12/16/2016).  First, it works on both iOS and Android.  Others are iOS only.  Second, it supports background uploading.  This means that users can background your app and the upload will continue.  This does not happen with other uploaders.
 
+What is the difference between this package and  [react-native-background-upload](https://github.com/Vydia/react-native-background-upload)?
 
-# Contributing
+> This package heavily inspired by react-native-background-upload and base on that.
+But this package has a some of features that do not exist in react-native-background-uploa, such as Upload queue and etc.
 
-See [CONTRIBUTING.md](https://github.com/Vydia/react-native-background-upload/CONTRIBUTING.md).
-
-# Common Issues
-
-## BREAKING CHANGE IN 3.0
-This is for 3.0 only.  This does NOT apply to 4.0, as recent React Native versions have upgraded the `okhttp` dependencies.  Anyway...
-
-In 3.0, you need to add
-```gradle
-    configurations.all { resolutionStrategy.force 'com.squareup.okhttp3:okhttp:3.4.1' }
-```
-to your app's app's `android/app/build.gradle` file.
-
-Just add it above (not within) `dependencies` and you'll be fine.
-
-
-## BREAKING CHANGE IN 2.0
-Two big things happened in version 2.0.  First, thehe Android package name had to be changed, as it conflicted with our own internal app.  My bad.  Second, we updated the android upload service dependency to the latest, but that requires the app have a compileSdkVersion and targetSdkVersion or 25.
-
-To upgrade:
-In `MainApplication.java`:
-
-Change
-
-    ```java
-    import com.vydia.UploaderReactPackage;
-    ```
-
-to
-
-    ```java
-    import com.vydia.RNUploader.UploaderReactPackage;
-    ```
-
-Then open your app's `android/app/build.gradle` file.
-Ensure `compileSdkVersion` and `targetSdkVersion` are 25.
-
-Done!
-
+## Inspiration
+This project is heavily inspired by [Gliphy](https://github.com/Vydia/react-native-background-upload). Kudos to [@Vydia](https://github.com/Vydia). :thumbsup:
 
 ## Gratitude
 
-Thanks to:
-- [android-upload-service](https://github.com/gotev/android-upload-service)  It made Android dead simple to support.
+Thanks to [android-upload-service](https://github.com/gotev/android-upload-service)  It made Android dead simple to support.
 
-- [MIME type from path on iOS](http://stackoverflow.com/questions/2439020/wheres-the-iphone-mime-type-database)  Thanks for the answer!
+
+## Author
+
+Mostafa Taghipour, mostafa@taghipour.me
+
+## License
+
+react-native-upload-manager is available under the MIT license. See the LICENSE file for more info.
