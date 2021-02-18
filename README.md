@@ -1,7 +1,7 @@
 # react-native-upload-manager [![npm version](https://badge.fury.io/js/react-native-upload-manager.svg)](https://badge.fury.io/js/react-native-upload-manager)
 
 A React Native Library to manage your http post file uploads with android and iOS background support.  If you are uploading large files like videos, use this so your users can background your app during a long upload. This library support both Serial (Queue) and Parallel upload.
-<img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/AndroidEasyList/master/screenshots/1.png"><img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/AndroidEasyList/master/screenshots/2.png">
+<img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/react-native-upload-manager/main/screenshots/1.png"><img width="290" alt="screenshots" src="https://raw.githubusercontent.com/MostafaTaghipour/react-native-upload-manager/main/screenshots/2.png">
 # Installation
 
 ## 1. Install package
@@ -301,7 +301,7 @@ What is the difference between this package and  [react-native-background-upload
 But this package has a some of features that do not exist in react-native-background-uploa, such as Upload queue and etc.
 
 ## Inspiration
-This project is heavily inspired by [Gliphy](https://github.com/Vydia/react-native-background-upload). Kudos to [@Vydia](https://github.com/Vydia). :thumbsup:
+This project is heavily inspired by [react-native-background-upload](https://github.com/Vydia/react-native-background-upload). Kudos to [@Vydia](https://github.com/Vydia). :thumbsup:
 
 ## Gratitude
 
