@@ -60,7 +60,7 @@ const App = () => {
             state: 'in_progress',
           }
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
           
           setUploadList(q)
         } else if (data && uploadQueue[data.id]) {
@@ -74,7 +74,7 @@ const App = () => {
             state: 'in_progress',
           }
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
           setUploadQueue(q)
         }
@@ -92,7 +92,7 @@ const App = () => {
             },
           }
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
           setUploadList(q)
         } else if (data && uploadQueue[data.id]) {
@@ -104,7 +104,7 @@ const App = () => {
             },
           }
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
           setUploadQueue(q)
         }
@@ -122,7 +122,7 @@ const App = () => {
             },
           }
 
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
           setUploadList(q)
         }
@@ -135,7 +135,7 @@ const App = () => {
             },
           }
           
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
           setUploadQueue(q)
         }
@@ -176,7 +176,7 @@ const App = () => {
         }
         q[uploadId] = { uri, progress: 0, state: 'not_uploaded' }
 
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         
         setUploadList(q)
       } else {
@@ -186,7 +186,7 @@ const App = () => {
         }
         q[uploadId] = { uri, progress: 0, state: 'not_uploaded' }
 
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
         setUploadQueue(q)
       }

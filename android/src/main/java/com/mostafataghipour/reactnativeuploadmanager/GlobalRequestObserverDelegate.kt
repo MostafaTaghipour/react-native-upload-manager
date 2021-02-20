@@ -1,5 +1,6 @@
 package com.mostafataghipour.reactnativeuploadmanager
 
+/*
 import android.content.Context
 import android.util.Log
 import com.facebook.react.bridge.Arguments
@@ -67,3 +68,4 @@ class GlobalRequestObserverDelegate(module: RNUploadManagerModule, reactApplicat
         weakModule.get()?.uploadNextItemInQueue()
     }
 }
+*/
