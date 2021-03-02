@@ -1,6 +1,6 @@
 {
   "name": "react-native-upload-manager",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The React Native http file uploader with android and iOS background support.",
   "homepage": "https://github.com/MostafaTaghipour/react-native-upload-manager#readme",
   "main": "lib/index.js",
