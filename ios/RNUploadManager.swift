@@ -333,8 +333,8 @@ extension RNUploadManager {
         let pathWithoutProtocol = fileUri?.path
         
         let data = FileManager.default.contents(atPath: pathWithoutProtocol ?? "")
-        let filename = path?.last
-        let mimetype = guessMIMEType(fromFileName: path)
+        let filename : String = fileUri?.lastPathComponent ?? ""
+        let mimetype : String = guessMIMEType(fromFileName: path) ?? ""
         
         (parameters as NSDictionary?)?.enumerateKeysAndObjects({ parameterKey, parameterValue, stop in
             if let data1 = "--\(boundary ?? "")\r\n".data(using: .utf8) {
@@ -351,10 +351,10 @@ extension RNUploadManager {
         if let data1 = "--\(boundary ?? "")\r\n".data(using: .utf8) {
             httpBody.append(data1)
         }
-        if let data1 = "Content-Disposition: form-data; name=\"\(fieldName ?? "")\"; filename=\"\(String(describing: filename))\"\r\n".data(using: .utf8) {
+        if  let data1 = "Content-Disposition: form-data; name=\"\(fieldName ?? "")\"; filename=\"\(String(describing: filename))\"\r\n".data(using: .utf8) {
             httpBody.append(data1)
         }
-        if let type = mimetype , let data1 = "Content-Type: \(String(describing: type))\r\n\r\n".data(using: .utf8) {
+        if  let data1 = "Content-Type: \(String(describing: mimetype))\r\n\r\n".data(using: .utf8) {
             httpBody.append(data1)
         }
         if let data = data {
