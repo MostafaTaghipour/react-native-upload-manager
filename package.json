@@ -1,6 +1,6 @@
 {
   "name": "react-native-upload-manager",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The React Native http file uploader with android and iOS background support.",
   "homepage": "https://github.com/MostafaTaghipour/react-native-upload-manager#readme",
   "main": "lib/index.js",
@@ -30,7 +30,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prepare": "yarn compile",
     "test": "jest",
-    "deploy": "npm pubilsh"
+    "deploy": "npm pubilsh",
+    "deploy:digikala": "npm publish --registry https://npm.digikala.com"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

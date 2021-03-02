@@ -354,7 +354,7 @@ extension RNUploadManager {
         if let data1 = "Content-Disposition: form-data; name=\"\(fieldName ?? "")\"; filename=\"\(String(describing: filename))\"\r\n".data(using: .utf8) {
             httpBody.append(data1)
         }
-        if let data1 = "Content-Type: \(String(describing: mimetype))\r\n\r\n".data(using: .utf8) {
+        if let type = mimetype , let data1 = "Content-Type: \(String(describing: type))\r\n\r\n".data(using: .utf8) {
             httpBody.append(data1)
         }
         if let data = data {
