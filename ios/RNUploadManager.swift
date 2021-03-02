@@ -225,17 +225,17 @@ class RNUploadManager: RCTEventEmitter {
      */
     @objc
     func addToUploadQueue(_ options: [AnyHashable : Any],  resolver resolve: RCTPromiseResolveBlock,
-                     rejecter  reject: @escaping RCTPromiseRejectBlock){
+                          rejecter  reject: @escaping RCTPromiseRejectBlock){
         
-//        self.queue.clear()
+        //        self.queue.clear()
         let empty = self.queue.isEmpty()
-
+        
         var opt = options
         let uploadId = opt["customUploadId"] as? String ?? UUID().uuidString
         opt["customUploadId"] = uploadId
-
+        
         self.queue.push(item: opt)
-
+        
         if (empty) {
             uploadNextItemInQueue()
         }
@@ -250,7 +250,7 @@ class RNUploadManager: RCTEventEmitter {
      */
     @objc
     func clearUploadQueue(_  resolve: RCTPromiseResolveBlock,
-                     rejecter  reject: @escaping RCTPromiseRejectBlock){
+                          rejecter  reject: @escaping RCTPromiseRejectBlock){
         
         self.queue.clear()
         resolve(true)
@@ -326,6 +326,8 @@ extension RNUploadManager {
         fieldName: String?
     ) -> Data? {
         
+        let crlf = "\r\n"
+        
         var httpBody = Data()
         
         // resolve path
@@ -336,37 +338,56 @@ extension RNUploadManager {
         let filename : String = fileUri?.lastPathComponent ?? ""
         let mimetype : String = guessMIMEType(fromFileName: path) ?? ""
         
-        (parameters as NSDictionary?)?.enumerateKeysAndObjects({ parameterKey, parameterValue, stop in
-            if let data1 = "--\(boundary ?? "")\r\n".data(using: .utf8) {
-                httpBody.append(data1)
-            }
-            if let data1 = "Content-Disposition: form-data; name=\"\(parameterKey )\"\r\n\r\n".data(using: .utf8) {
-                httpBody.append(data1)
-            }
-            if let data1 = "\(parameterValue )\r\n".data(using: .utf8) {
-                httpBody.append(data1)
-            }
-        })
         
-        if let data1 = "--\(boundary ?? "")\r\n".data(using: .utf8) {
-            httpBody.append(data1)
-        }
-        if  let data1 = "Content-Disposition: form-data; name=\"\(fieldName ?? "")\"; filename=\"\(String(describing: filename))\"\r\n".data(using: .utf8) {
-            httpBody.append(data1)
-        }
-        if  let data1 = "Content-Type: \(String(describing: mimetype))\r\n\r\n".data(using: .utf8) {
-            httpBody.append(data1)
-        }
+        httpBody.append(BoundaryGenerator.boundaryData(boundaryType: .initial, boundaryKey: boundary ?? ""))
+        
+        httpBody.append(Data((
+                                "Content-Disposition: form-data; name=\"\(fieldName ?? "")\"; filename=\"\(filename)\"\(crlf)" +
+                                    "Content-Type: \(mimetype)\(crlf)\(crlf)").utf8
+        )
+        )
+        
         if let data = data {
             httpBody.append(data)
         }
-        if let data1 = "\r\n".data(using: .utf8) {
-            httpBody.append(data1)
-        }
         
-        if let data1 = "--\(boundary ?? "")--\r\n".data(using: .utf8) {
-            httpBody.append(data1)
-        }
+        httpBody.append(BoundaryGenerator.boundaryData(boundaryType: .final, boundaryKey: boundary ?? ""))
+        
+        //        (parameters as NSDictionary?)?.enumerateKeysAndObjects({ parameterKey, parameterValue, stop in
+        //            if let data1 = "--\(boundary ?? "")\r\n".data(using: .utf8) {
+        //                httpBody.append(data1)
+        //            }
+        //            if let data1 = "Content-Disposition: form-data; name=\"\(parameterKey )\"\r\n\r\n".data(using: .utf8) {
+        //                httpBody.append(data1)
+        //            }
+        //            if let data1 = "\(parameterValue )\r\n".data(using: .utf8) {
+        //                httpBody.append(data1)
+        //            }
+        //        })
+        
+        
+        
+        
+        //        if let data1 = "--\(boundary ?? "")\r\n".data(using: .utf8) {
+        //            httpBody.append(data1)
+        //        }
+        //        if  let data1 = "Content-Disposition: form-data; name=\"\(String(describing: fieldName))\"; filename=\"\(String(describing: filename))\"\r\n".data(using: .utf8) {
+        //            httpBody.append(data1)
+        //        }
+        //        if  let data1 = "Content-Type: \(String(describing: mimetype))\r\n\r\n".data(using: .utf8) {
+        //            httpBody.append(data1)
+        //        }
+//        if let data = data {
+//            httpBody.append(data)
+//        }
+        
+//        if let data1 = "\r\n".data(using: .utf8) {
+//            httpBody.append(data1)
+//        }
+//
+//        if let data1 = "--\(boundary ?? "")--\r\n".data(using: .utf8) {
+//            httpBody.append(data1)
+//        }
         
         return httpBody
     }
@@ -404,7 +425,7 @@ extension RNUploadManager {
         uploadNextItemInQueue()
     }
     
-   private func removeFromQueue(uploadId:String?)  {
+    private func removeFromQueue(uploadId:String?)  {
         guard let id = uploadId else { return  }
         self.queue.remove(id: id)
     }
@@ -492,3 +513,32 @@ extension RNUploadManager : URLSessionDataDelegate , URLSessionTaskDelegate {
 
 
 
+struct EncodingCharacters {
+    static let crlf = "\r\n"
+}
+
+enum BoundaryGenerator {
+    enum BoundaryType {
+        case initial, encapsulated, final
+    }
+    
+    static func boundary(forBoundaryType boundaryType: BoundaryType, boundaryKey: String) -> String {
+        let boundary: String
+        
+        switch boundaryType {
+        case .initial:
+            boundary = "--\(boundaryKey)\(EncodingCharacters.crlf)"
+        case .encapsulated:
+            boundary = "\(EncodingCharacters.crlf)--\(boundaryKey)\(EncodingCharacters.crlf)"
+        case .final:
+            boundary = "\(EncodingCharacters.crlf)--\(boundaryKey)--\(EncodingCharacters.crlf)"
+        }
+        
+        return boundary
+    }
+    
+    static func boundaryData(boundaryType: BoundaryType, boundaryKey: String) -> Data {
+        Data(BoundaryGenerator.boundary(forBoundaryType: boundaryType,
+                                        boundaryKey: boundaryKey).utf8)
+    }
+}
