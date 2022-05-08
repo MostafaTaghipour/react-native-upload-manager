@@ -30,7 +30,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prepare": "yarn compile",
     "test": "jest",
-    "deploy": "npm pubilsh",
+    "deploy": "npm publish",
     "deploy:digikala": "npm publish --registry https://npm.digikala.com"
   },
   "devDependencies": {
